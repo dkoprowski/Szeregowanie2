@@ -13,6 +13,8 @@ namespace SzeregowanieProjekt2.Controllers.BusinessLogic
         List<Task> resultList;
         List<Task> availableList;
         Dictionary<Task, int> L;
+        Dictionary<int, int> processingTimeBackup; // <id,processingTime>
+
         public List<Task> SortedTasks(List<Task> unsortedTasks)
         {
             createBlank();
@@ -21,10 +23,35 @@ namespace SzeregowanieProjekt2.Controllers.BusinessLogic
             availableList = new List<Task>();
             tempTasksList = unsortedTasks;
             L = new Dictionary<Task, int>();
+            backupProcessingTime();
             // end of init
             sort();
 
+            recoverProcessingTime();
             return resultList; //rrrr
+        }
+
+        void backupProcessingTime()
+        {
+            processingTimeBackup = new Dictionary<int, int>();
+            foreach (Task task in tempTasksList)
+            {
+                processingTimeBackup.Add(task.id, task.processingTime);
+            }
+        }
+
+        void recoverProcessingTime()
+        {
+            foreach (Task task in resultList)
+            {
+               try{
+                    task.processingTime = processingTimeBackup[task.id];
+               }
+               catch
+               {
+                   task.processingTime = 1;
+               }
+            }
         }
 
         void sort() {
@@ -75,8 +102,8 @@ namespace SzeregowanieProjekt2.Controllers.BusinessLogic
                 int theBiggestL = L[unsortedTasks[0]] - unsortedTasks[0].deadline;
                 foreach (Task task in unsortedTasks)
                 {
-                    if (theBiggestL <= L[unsortedTasks[0]] - unsortedTasks[0].deadline)
-                        theBiggestL = L[unsortedTasks[0]] - unsortedTasks[0].deadline;
+                    if (theBiggestL <= L[task] - task.deadline)
+                        theBiggestL = L[task] - task.deadline;
                 }
 
                 return theBiggestL;
