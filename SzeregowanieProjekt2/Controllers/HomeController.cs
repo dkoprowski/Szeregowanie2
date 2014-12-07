@@ -8,8 +8,12 @@ namespace SzeregowanieProjekt2.Controllers
 {
     public class HomeController : Controller
     {
+        
         public ActionResult Index()
         {
+            ViewBag.AppName = "Szeregowanie";
+
+
             return View();
         }
 
